@@ -136,19 +136,6 @@ export const Navbar: React.FC = () => {
             {/* Right Controls */}
             <div className="flex items-center space-x-3">
               <button
-                onClick={toggleDiscreetMode}
-                title={discreetMode ? 'Switch branding back' : 'Activate discreet mode'}
-                className="p-2 rounded-xl text-slate-500 hover:text-slate-900 hover:bg-[#FAF9F6] border border-[#EDECE8] transition-colors text-xs flex items-center space-x-1"
-              >
-                {discreetMode ? <EyeOff className="w-4 h-4 text-amber-600" /> : <Eye className="w-4 h-4" />}
-                <span className="hidden xl:inline text-xs font-medium">
-                  {discreetMode ? 'Discreet' : 'Discreet'}
-                </span>
-              </button>
-
-              <QuickExitButton compact />
-
-              <button
                 onClick={() => setShowSignInModal(true)}
                 className="hidden sm:inline-flex px-3.5 py-2 text-sm font-semibold text-slate-700 hover:text-slate-900 hover:bg-[#FAF9F6] rounded-xl transition-colors cursor-pointer"
               >

@@ -4,7 +4,6 @@ import { SafeguardProvider } from './context/SafeguardContext';
 import { ToastProvider } from './context/ToastContext';
 import { Navbar } from './components/common/Navbar';
 import { Footer } from './components/common/Footer';
-import { PrivacyBanner } from './components/common/PrivacyBanner';
 
 // Pages
 import { Home } from './pages/Home';
@@ -37,7 +36,6 @@ const LayoutContent: React.FC = () => {
       <Navbar />
 
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-16">
-        <PrivacyBanner />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/dashboard" element={<Dashboard />} />
