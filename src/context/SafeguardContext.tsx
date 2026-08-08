@@ -126,7 +126,23 @@ const INITIAL_TRANSACTIONS: Transaction[] = [
   },
 ];
 
+export interface User {
+  id: string;
+  email: string;
+  name: string;
+}
+
 interface SafeguardContextType {
+  user: User | null;
+  isAuthenticated: boolean;
+  login: (email: string, password?: string) => { success: boolean; error?: string };
+  signup: (email: string, password?: string, name?: string) => { success: boolean; error?: string };
+  logout: () => void;
+  showAuthModal: boolean;
+  authModalTab: 'login' | 'signup';
+  openAuthModal: (tab?: 'login' | 'signup', redirectTarget?: string) => void;
+  closeAuthModal: () => void;
+  authRedirectTarget: string | null;
   settings: UserSettings;
   updateSettings: (newSettings: Partial<UserSettings>) => void;
   discreetMode: boolean;
@@ -164,6 +180,101 @@ const DEFAULT_SETTINGS: UserSettings = {
 const SafeguardContext = createContext<SafeguardContextType | undefined>(undefined);
 
 export const SafeguardProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [user, setUser] = useState<User | null>(() => {
+    const saved = localStorage.getItem('safeguard_current_user');
+    return saved ? JSON.parse(saved) : null;
+  });
+
+  const [showAuthModal, setShowAuthModal] = useState<boolean>(false);
+  const [authModalTab, setAuthModalTab] = useState<'login' | 'signup'>('login');
+  const [authRedirectTarget, setAuthRedirectTarget] = useState<string | null>(null);
+
+  const openAuthModal = (tab: 'login' | 'signup' = 'login', redirectTarget?: string) => {
+    setAuthModalTab(tab);
+    if (redirectTarget) {
+      setAuthRedirectTarget(redirectTarget);
+    }
+    setShowAuthModal(true);
+  };
+
+  const closeAuthModal = () => {
+    setShowAuthModal(false);
+  };
+
+  const login = (email: string, password?: string) => {
+    if (!email || !email.includes('@')) {
+      return { success: false, error: 'Please enter a valid email address.' };
+    }
+    const savedUsers = localStorage.getItem('safeguard_users_db');
+    const usersList: Array<{ id: string; email: string; name: string; password?: string }> = savedUsers
+      ? JSON.parse(savedUsers)
+      : [{ id: 'usr-demo', email: 'user@example.com', name: 'Demo User', password: 'password123' }];
+
+    const normalizedEmail = email.trim().toLowerCase();
+    const foundUser = usersList.find((u) => u.email.toLowerCase() === normalizedEmail);
+
+    if (foundUser) {
+      if (password && foundUser.password && foundUser.password !== password) {
+        return { success: false, error: 'Incorrect password. Please try again.' };
+      }
+      const loggedUser: User = {
+        id: foundUser.id,
+        email: foundUser.email,
+        name: foundUser.name,
+      };
+      setUser(loggedUser);
+      localStorage.setItem('safeguard_current_user', JSON.stringify(loggedUser));
+      return { success: true };
+    }
+
+    // If not found in database, allow auto-creating account on login or returning user
+    const newUser: User = {
+      id: 'usr-' + Date.now(),
+      email: normalizedEmail,
+      name: normalizedEmail.split('@')[0],
+    };
+    usersList.push({ ...newUser, password: password || 'password' });
+    localStorage.setItem('safeguard_users_db', JSON.stringify(usersList));
+    setUser(newUser);
+    localStorage.setItem('safeguard_current_user', JSON.stringify(newUser));
+    return { success: true };
+  };
+
+  const signup = (email: string, password?: string, name?: string) => {
+    if (!email || !email.includes('@')) {
+      return { success: false, error: 'Please enter a valid email address.' };
+    }
+    if (password && password.length < 4) {
+      return { success: false, error: 'Password must be at least 4 characters long.' };
+    }
+    const savedUsers = localStorage.getItem('safeguard_users_db');
+    const usersList: Array<{ id: string; email: string; name: string; password?: string }> = savedUsers
+      ? JSON.parse(savedUsers)
+      : [];
+
+    const normalizedEmail = email.trim().toLowerCase();
+    const existing = usersList.find((u) => u.email.toLowerCase() === normalizedEmail);
+    if (existing) {
+      return { success: false, error: 'An account with this email already exists. Please log in instead.' };
+    }
+
+    const newUser: User = {
+      id: 'usr-' + Date.now(),
+      email: normalizedEmail,
+      name: name?.trim() || normalizedEmail.split('@')[0],
+    };
+    usersList.push({ ...newUser, password: password || 'password' });
+    localStorage.setItem('safeguard_users_db', JSON.stringify(usersList));
+    setUser(newUser);
+    localStorage.setItem('safeguard_current_user', JSON.stringify(newUser));
+    return { success: true };
+  };
+
+  const logout = () => {
+    setUser(null);
+    localStorage.removeItem('safeguard_current_user');
+  };
+
   const [settings, setSettings] = useState<UserSettings>(() => {
     const saved = localStorage.getItem('safeguard_settings');
     return saved ? JSON.parse(saved) : DEFAULT_SETTINGS;
@@ -282,6 +393,7 @@ export const SafeguardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const wipeAllData = () => {
     localStorage.clear();
+    setUser(null);
     setIsDemoMode(false);
     setTransactions(INITIAL_TRANSACTIONS);
     setQuestionnaireAnswers({});
@@ -339,6 +451,16 @@ export const SafeguardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   return (
     <SafeguardContext.Provider
       value={{
+        user,
+        isAuthenticated: Boolean(user),
+        login,
+        signup,
+        logout,
+        showAuthModal,
+        authModalTab,
+        openAuthModal,
+        closeAuthModal,
+        authRedirectTarget,
         settings,
         updateSettings,
         discreetMode: settings.discreetMode,

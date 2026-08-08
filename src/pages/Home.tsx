@@ -26,13 +26,20 @@ import { Badge } from '../components/ui/Badge';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../components/ui/Card';
 import { useSafeguard } from '../context/SafeguardContext';
 import { useToast } from '../context/ToastContext';
-import { BackButton } from '../components/common/BackButton';
 
 export const Home: React.FC = () => {
   const navigate = useNavigate();
   const { addToast } = useToast();
-  const { calculatedScore, patterns, transactions, startDemo } = useSafeguard();
+  const { calculatedScore, patterns, transactions, startDemo, isAuthenticated, openAuthModal } = useSafeguard();
   const flaggedCount = transactions.filter((t) => t.flagged).length;
+
+  const handleStartAssessment = () => {
+    if (!isAuthenticated) {
+      openAuthModal('login', '/dashboard');
+    } else {
+      navigate('/dashboard');
+    }
+  };
 
   const handleStartDemo = () => {
     startDemo();
@@ -53,7 +60,6 @@ export const Home: React.FC = () => {
 
   return (
     <div className="space-y-20 py-4 sm:py-8 animate-fade-in selection:bg-indigo-100 selection:text-indigo-900">
-      <BackButton fallbackPath="/dashboard" />
       {/* ---------------- HERO SECTION ---------------- */}
       <section className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center pt-2 pb-8">
         {/* Left Column: Typography & CTAs */}
@@ -86,12 +92,13 @@ export const Home: React.FC = () => {
               <span>Start Demo</span>
             </button>
 
-            <NavLink to="/assessment" className="w-full sm:w-auto">
-              <button className="w-full sm:w-auto px-6 py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-base rounded-xl transition-all shadow-md active:scale-[0.98] flex items-center justify-center space-x-2 cursor-pointer">
-                <span>Start private assessment</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
-            </NavLink>
+            <button
+              onClick={handleStartAssessment}
+              className="w-full sm:w-auto px-6 py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-base rounded-xl transition-all shadow-md active:scale-[0.98] flex items-center justify-center space-x-2 cursor-pointer"
+            >
+              <span>Start private assessment</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
 
             <button
               onClick={() => scrollToSection('how-it-works')}

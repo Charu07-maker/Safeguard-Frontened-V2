@@ -17,10 +17,17 @@ import { useToast } from '../../context/ToastContext';
 import { QuickExitButton } from './QuickExitButton';
 
 export const Navbar: React.FC = () => {
-  const { discreetMode, toggleDiscreetMode, isDemoMode, resetDemo } = useSafeguard();
+  const {
+    discreetMode,
+    isDemoMode,
+    resetDemo,
+    isAuthenticated,
+    user,
+    logout,
+    openAuthModal,
+  } = useSafeguard();
   const { addToast } = useToast();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [showSignInModal, setShowSignInModal] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -135,18 +142,26 @@ export const Navbar: React.FC = () => {
 
             {/* Right Controls */}
             <div className="flex items-center space-x-3">
-              <button
-                onClick={() => setShowSignInModal(true)}
-                className="hidden sm:inline-flex px-3.5 py-2 text-sm font-semibold text-slate-700 hover:text-slate-900 hover:bg-[#FAF9F6] rounded-xl transition-colors cursor-pointer"
-              >
-                Sign in
-              </button>
-
-              <NavLink to="/assessment">
-                <button className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm rounded-xl transition-transform active:scale-[0.98] shadow-sm flex items-center space-x-1.5 cursor-pointer">
-                  <span>Start privately</span>
+              {isAuthenticated ? (
+                <div className="hidden sm:flex items-center space-x-2">
+                  <span className="text-xs font-bold text-slate-700 bg-stone-100 px-3 py-2 rounded-xl border border-stone-200">
+                    {user?.name || 'Account'}
+                  </span>
+                  <button
+                    onClick={logout}
+                    className="px-3 py-2 text-xs font-bold text-rose-600 hover:bg-rose-50 rounded-xl transition-colors cursor-pointer"
+                  >
+                    Sign out
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={() => openAuthModal('login')}
+                  className="hidden sm:inline-flex px-4 py-2 text-sm font-semibold text-slate-700 hover:text-slate-900 hover:bg-[#FAF9F6] rounded-xl border border-[#EDECE8] transition-colors cursor-pointer"
+                >
+                  Sign in
                 </button>
-              </NavLink>
+              )}
 
               {/* Mobile Menu Button */}
               <button
@@ -198,76 +213,31 @@ export const Navbar: React.FC = () => {
             </NavLink>
 
             <div className="pt-2 flex flex-col gap-2">
-              <button
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  setShowSignInModal(true);
-                }}
-                className="w-full py-2.5 text-slate-700 font-semibold border border-[#EDECE8] rounded-xl text-center text-sm"
-              >
-                Sign in
-              </button>
-              <NavLink to="/assessment" onClick={() => setMobileMenuOpen(false)}>
-                <button className="w-full py-3 bg-indigo-600 text-white font-bold rounded-xl text-center text-sm">
-                  Start privately
+              {isAuthenticated ? (
+                <button
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    logout();
+                  }}
+                  className="w-full py-2.5 text-rose-700 font-semibold border border-rose-200 rounded-xl text-center text-sm bg-rose-50"
+                >
+                  Sign out ({user?.name || user?.email})
                 </button>
-              </NavLink>
+              ) : (
+                <button
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    openAuthModal('login');
+                  }}
+                  className="w-full py-2.5 text-slate-700 font-semibold border border-[#EDECE8] rounded-xl text-center text-sm"
+                >
+                  Sign in
+                </button>
+              )}
             </div>
           </div>
         )}
       </header>
-
-      {/* Local Confidential Session / Sign In Modal */}
-      {showSignInModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs animate-fade-in">
-          <div className="bg-white rounded-[24px] border border-[#EDECE8] p-6 sm:p-8 max-w-md w-full shadow-2xl space-y-5 animate-scale-up">
-            <div className="flex items-center justify-between">
-              <div className="w-10 h-10 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
-                <Lock className="w-5 h-5" />
-              </div>
-              <button
-                onClick={() => setShowSignInModal(false)}
-                className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-stone-100"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <div>
-              <h3 className="text-xl font-bold text-slate-900">Private Session Active</h3>
-              <p className="text-sm text-slate-500 mt-1 leading-relaxed">
-                Safeguard does not require an email or cloud account. Your assessment state and uploaded sample records stay 100% inside your local browser memory.
-              </p>
-            </div>
-
-            <div className="bg-[#FAF9F6] p-4 rounded-2xl border border-[#EDECE8] text-xs text-slate-600 space-y-2">
-              <div className="flex items-center space-x-2 text-indigo-900 font-semibold">
-                <UserCheck className="w-4 h-4 text-emerald-600" />
-                <span>Anonymous Anonymous ID: #SAFE-{Math.floor(1000 + Math.random() * 9000)}</span>
-              </div>
-              <p>You can clear all local records anytime in Settings or click Quick Exit.</p>
-            </div>
-
-            <div className="flex flex-col gap-2">
-              <button
-                onClick={() => {
-                  setShowSignInModal(false);
-                  navigate('/dashboard');
-                }}
-                className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-sm transition-transform active:scale-[0.98] cursor-pointer"
-              >
-                Go to Dashboard
-              </button>
-              <button
-                onClick={() => setShowSignInModal(false)}
-                className="w-full py-2.5 text-slate-500 hover:text-slate-800 text-sm font-medium"
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </>
   );
 };

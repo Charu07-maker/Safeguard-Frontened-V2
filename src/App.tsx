@@ -4,6 +4,8 @@ import { SafeguardProvider } from './context/SafeguardContext';
 import { ToastProvider } from './context/ToastContext';
 import { Navbar } from './components/common/Navbar';
 import { Footer } from './components/common/Footer';
+import { AuthModal } from './components/common/AuthModal';
+import { RequireAuth } from './components/common/RequireAuth';
 
 // Pages
 import { Home } from './pages/Home';
@@ -39,11 +41,46 @@ const LayoutContent: React.FC = () => {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/assessment" element={<Assessment />} />
-          <Route path="/financial-data" element={<FinancialData />} />
-          <Route path="/pattern-analysis" element={<PatternAnalysis />} />
-          <Route path="/questionnaire" element={<Questionnaire />} />
-          <Route path="/results" element={<Results />} />
+          <Route
+            path="/assessment"
+            element={
+              <RequireAuth>
+                <Assessment />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/financial-data"
+            element={
+              <RequireAuth>
+                <FinancialData />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/pattern-analysis"
+            element={
+              <RequireAuth>
+                <PatternAnalysis />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/questionnaire"
+            element={
+              <RequireAuth>
+                <Questionnaire />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/results"
+            element={
+              <RequireAuth>
+                <Results />
+              </RequireAuth>
+            }
+          />
           <Route path="/resources" element={<Resources />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/settings/privacy" element={<PrivacyCenter />} />
@@ -61,6 +98,7 @@ export default function App() {
       <ToastProvider>
         <Router>
           <LayoutContent />
+          <AuthModal />
         </Router>
       </ToastProvider>
     </SafeguardProvider>
