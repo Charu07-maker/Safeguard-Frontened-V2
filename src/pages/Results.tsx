@@ -1,0 +1,528 @@
+import React, { useState } from 'react';
+import { useNavigate, NavLink } from 'react-router-dom';
+import {
+  Shield,
+  Info,
+  Lock,
+  AlertCircle,
+  BookOpen,
+  Download,
+  Trash2,
+  RotateCcw,
+  CheckCircle2,
+  Heart,
+  ArrowRight,
+  ArrowLeft,
+  LifeBuoy,
+  FileText,
+  Sparkles,
+} from 'lucide-react';
+import { useSafeguard } from '../context/SafeguardContext';
+import { useToast } from '../context/ToastContext';
+import { AIInsight } from '../components/common/AIInsight';
+
+export const Results: React.FC = () => {
+  const navigate = useNavigate();
+  const { addToast } = useToast();
+  const { wipeAllData, questionnaireAnswers, isDemoMode, resetDemo } = useSafeguard();
+
+  // Active signal level state (Low, Moderate, Higher) - defaults to Moderate
+  const [activeSignal, setActiveSignal] = useState<'Low' | 'Moderate' | 'Higher'>('Moderate');
+
+  const handleSaveResults = () => {
+    const reportText = `SAFEGUARD FINANCIAL AUTONOMY OVERVIEW
+Date: ${new Date().toLocaleDateString()}
+Status: Informational Assessment Summary (Non-Diagnostic)
+
+OVERALL SIGNAL: ${activeSignal}
+"This level represents the combination of selected patterns and questionnaire responses. It is not a diagnosis or prediction."
+
+KEY BREAKDOWN:
+1. Financial access:
+   - Observation: Your responses indicate that access to money may sometimes be limited.
+   - Context: Essential liquidity enables independence during unexpected personal needs.
+   - Recommendation: Consider maintaining small, accessible personal reserves.
+
+2. Financial decision-making:
+   - Observation: You indicated that you may not always have complete control over financial decisions.
+   - Context: Shared decision-making works best with mutual transparency and voluntary agreement.
+   - Recommendation: Review which financial choices you feel comfortable discussing independently.
+
+3. Transaction patterns:
+   - Observation: Several unusual withdrawal patterns were identified in the optional financial data.
+   - Context: Cash transactions are common but reduce digital auditability over time.
+   - Recommendation: Periodically review transaction histories to stay informed.
+
+RECOMMENDATIONS FOR REFLECTION:
+- Review your financial access: Consider whether you can access essential funds when needed.
+- Understand your accounts: Make sure you know which accounts and services you have access to.
+- Consider speaking with someone you trust: If you feel uncomfortable or pressured about finances, consider seeking appropriate support.
+
+SAFETY NOTICE:
+"If you are in immediate danger, contact appropriate local emergency or support services."
+
+DISCLAIMER:
+"Your results are informational and should not be treated as legal, medical, or professional advice."
+==================================================
+Generated locally via Safeguard. Zero data saved on external servers.`;
+
+    const blob = new Blob([reportText], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `safeguard-autonomy-overview-${new Date().toISOString().split('T')[0]}.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
+
+    addToast({
+      title: 'Results Saved Locally',
+      description: 'An informational text file has been exported to your downloads folder.',
+      type: 'success',
+    });
+  };
+
+  const handleStartNewAssessment = () => {
+    addToast({
+      title: 'Starting New Assessment',
+      description: 'Navigating back to step 1 of the assessment.',
+      type: 'info',
+    });
+    navigate('/assessment');
+  };
+
+  const handleDeleteData = () => {
+    if (window.confirm('Are you sure you want to delete all local assessment data and reset session state?')) {
+      wipeAllData();
+      addToast({
+        title: 'Assessment Data Deleted',
+        description: 'All local questionnaire answers and financial entries have been cleared.',
+        type: 'info',
+      });
+      navigate('/');
+    }
+  };
+
+  return (
+    <div className="max-w-4xl mx-auto space-y-10 animate-fade-in py-4 sm:py-6">
+      {/* HEADER */}
+      <div className="space-y-3 border-b border-[#EDECE8] pb-6">
+        <div className="flex items-center justify-between">
+          <span className="text-xs font-extrabold uppercase tracking-widest text-indigo-600">
+            Step 4 of 4
+          </span>
+          <span className="px-3 py-1 bg-stone-100 text-slate-700 border border-stone-200 rounded-full text-xs font-bold uppercase tracking-wider">
+            Informational Assessment
+          </span>
+        </div>
+
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-[#1A1A1A] tracking-tight">
+          Your financial autonomy overview
+        </h1>
+        <p className="text-sm sm:text-base text-[#6B7280] leading-relaxed">
+          Based on the information you chose to provide.
+        </p>
+      </div>
+
+      {isDemoMode && (
+        <div className="bg-amber-500/10 border border-amber-500/20 rounded-[20px] p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-amber-950">
+          <div className="flex items-center space-x-3">
+            <span className="px-3 py-1 bg-amber-500/20 rounded-full font-extrabold text-xs uppercase tracking-wider shrink-0">
+              Demo data — fictional
+            </span>
+            <span className="text-xs font-medium text-amber-950/90">
+              Profile: Maya Sharma (₹45,000 monthly income, 6 months transaction history)
+            </span>
+          </div>
+          <button
+            onClick={() => {
+              resetDemo();
+              addToast({ title: 'Demo Reset', description: 'Restored standard clean state.', type: 'info' });
+              navigate('/');
+            }}
+            className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold rounded-xl transition-all shadow-xs flex items-center justify-center space-x-1.5 cursor-pointer shrink-0"
+          >
+            <RotateCcw className="w-3.5 h-3.5" />
+            <span>Reset demo</span>
+          </button>
+        </div>
+      )}
+
+      {/* RESULT CARD */}
+      <div className="bg-white border border-[#EDECE8] rounded-[28px] p-6 sm:p-10 shadow-sm space-y-8 relative overflow-hidden">
+        {/* Subtle accent bar */}
+        <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-indigo-500 via-amber-500 to-indigo-500"></div>
+
+        <div className="space-y-4">
+          <div className="flex flex-wrap items-center gap-3">
+            <span className="px-3.5 py-1.5 bg-amber-50 text-amber-900 border border-amber-200 rounded-full text-xs font-extrabold inline-flex items-center space-x-1.5">
+              <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+              <span>Informational Signal</span>
+            </span>
+            <span className="text-xs text-slate-500 font-medium">
+              Calculated from provided inputs
+            </span>
+          </div>
+
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-[#1A1A1A]">
+            Some areas may be worth reviewing
+          </h2>
+
+          <p className="text-sm sm:text-base text-[#4B5563] leading-relaxed max-w-3xl">
+            Your responses and selected financial patterns suggest that you may want to take a closer look at your financial autonomy.
+          </p>
+        </div>
+
+        {/* IMPORTANT DISCLAIMER */}
+        <div className="p-4 bg-stone-50 border border-stone-200 rounded-2xl text-xs sm:text-sm text-slate-700 leading-relaxed flex items-start space-x-3">
+          <Info className="w-5 h-5 text-indigo-600 shrink-0 mt-0.5" />
+          <div className="space-y-1">
+            <strong className="font-bold text-slate-900 block">Informational Disclaimer</strong>
+            <p>This is an informational assessment. It cannot determine whether financial abuse has occurred.</p>
+            <p className="text-xs font-bold text-indigo-700 pt-1">
+              "Patterns are signals, not conclusions."
+            </p>
+          </div>
+        </div>
+
+        {/* OVERALL SIGNAL / RISK LEVEL SELECTOR */}
+        <div className="pt-4 border-t border-[#EDECE8] space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div>
+              <span className="text-xs font-bold uppercase tracking-wider text-slate-400 block">
+                Overall signal
+              </span>
+              <div className="text-2xl font-extrabold text-indigo-900 mt-0.5">
+                {activeSignal}
+              </div>
+            </div>
+
+            {/* Three signal level tabs */}
+            <div className="flex items-center space-x-1 bg-stone-100 p-1 rounded-xl border border-stone-200">
+              {(['Low', 'Moderate', 'Higher'] as const).map((level) => (
+                <button
+                  key={level}
+                  onClick={() => setActiveSignal(level)}
+                  className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                    activeSignal === level
+                      ? 'bg-white text-indigo-950 shadow-xs border border-stone-200'
+                      : 'text-slate-600 hover:text-slate-900'
+                  }`}
+                >
+                  {level}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <p className="text-xs text-[#6B7280] leading-relaxed italic">
+            This level represents the combination of selected patterns and questionnaire responses. It is not a diagnosis or prediction.
+          </p>
+        </div>
+      </div>
+
+      {/* AI INSIGHT LAYER */}
+      <AIInsight
+        pattern="ATM withdrawals increased significantly over the last three months."
+        context="You also indicated that you sometimes have limited access to money."
+        interpretation="Together, these signals may be worth reviewing as part of your financial autonomy."
+        limitation="These signals cannot establish intent, coercion or financial abuse."
+        patternConfidence="High"
+        confidenceExplanation="The transaction pattern is clearly present in the supplied data."
+        whyAmISeeingThis="Safeguard correlates identified transaction anomalies with optional answers provided during private reflection."
+        whatDataDoesNotTellMe="Transaction lists alone cannot explain personal arrangements, shared household agreements, or underlying motivations."
+      />
+
+      {/* BREAKDOWN CARDS */}
+      <div className="space-y-4">
+        <h3 className="text-xl font-bold text-[#1A1A1A]">Assessment Breakdown</h3>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* CARD 1: Financial access */}
+          <div className="bg-white border border-[#EDECE8] rounded-[24px] p-6 shadow-xs space-y-4 flex flex-col justify-between">
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-extrabold uppercase tracking-wider text-indigo-600">
+                  Domain 01
+                </span>
+                <span className="px-2.5 py-0.5 bg-amber-50 text-amber-800 text-[11px] font-bold rounded-full">
+                  Signal Observed
+                </span>
+              </div>
+
+              <h4 className="text-base font-bold text-slate-900">Financial access</h4>
+
+              <div className="space-y-2">
+                <div>
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wide block">
+                    Observation
+                  </span>
+                  <p className="text-xs text-slate-800 font-medium leading-relaxed mt-0.5">
+                    Your responses indicate that access to money may sometimes be limited.
+                  </p>
+                </div>
+
+                <div>
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wide block">
+                    Context
+                  </span>
+                  <p className="text-xs text-slate-600 leading-relaxed mt-0.5">
+                    Having reliable access to personal liquidity ensures independence in daily living expenses.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="pt-3 border-t border-[#EDECE8]">
+              <span className="text-[10px] font-bold text-indigo-700 uppercase tracking-wide block">
+                Neutral Recommendation
+              </span>
+              <p className="text-xs text-slate-700 font-medium mt-0.5">
+                Consider establishing small personal reserves accessible in your own name.
+              </p>
+            </div>
+          </div>
+
+          {/* CARD 2: Financial decision-making */}
+          <div className="bg-white border border-[#EDECE8] rounded-[24px] p-6 shadow-xs space-y-4 flex flex-col justify-between">
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-extrabold uppercase tracking-wider text-indigo-600">
+                  Domain 02
+                </span>
+                <span className="px-2.5 py-0.5 bg-indigo-50 text-indigo-700 text-[11px] font-bold rounded-full">
+                  Review Suggested
+                </span>
+              </div>
+
+              <h4 className="text-base font-bold text-slate-900">Financial decision-making</h4>
+
+              <div className="space-y-2">
+                <div>
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wide block">
+                    Observation
+                  </span>
+                  <p className="text-xs text-slate-800 font-medium leading-relaxed mt-0.5">
+                    You indicated that you may not always have complete control over financial decisions.
+                  </p>
+                </div>
+
+                <div>
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wide block">
+                    Context
+                  </span>
+                  <p className="text-xs text-slate-600 leading-relaxed mt-0.5">
+                    Equal partnerships foster shared decision-making without unilateral pressure.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="pt-3 border-t border-[#EDECE8]">
+              <span className="text-[10px] font-bold text-indigo-700 uppercase tracking-wide block">
+                Neutral Recommendation
+              </span>
+              <p className="text-xs text-slate-700 font-medium mt-0.5">
+                Reflect on choices where you would prefer greater individual autonomy.
+              </p>
+            </div>
+          </div>
+
+          {/* CARD 3: Transaction patterns */}
+          <div className="bg-white border border-[#EDECE8] rounded-[24px] p-6 shadow-xs space-y-4 flex flex-col justify-between">
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-extrabold uppercase tracking-wider text-indigo-600">
+                  Domain 03
+                </span>
+                <span className="px-2.5 py-0.5 bg-stone-100 text-slate-700 text-[11px] font-bold rounded-full">
+                  Pattern Pattern
+                </span>
+              </div>
+
+              <h4 className="text-base font-bold text-slate-900">Transaction patterns</h4>
+
+              <div className="space-y-2">
+                <div>
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wide block">
+                    Observation
+                  </span>
+                  <p className="text-xs text-slate-800 font-medium leading-relaxed mt-0.5">
+                    Several unusual withdrawal patterns were identified in the optional financial data.
+                  </p>
+                </div>
+
+                <div>
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wide block">
+                    Context
+                  </span>
+                  <p className="text-xs text-slate-600 leading-relaxed mt-0.5">
+                    Cash movements are common but reduce clear transaction visibility over time.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="pt-3 border-t border-[#EDECE8]">
+              <span className="text-[10px] font-bold text-indigo-700 uppercase tracking-wide block">
+                Neutral Recommendation
+              </span>
+              <p className="text-xs text-slate-700 font-medium mt-0.5">
+                Periodically review bank statements to track recurring outflows.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* AI EXPLANATION */}
+      <div className="bg-white border border-[#EDECE8] rounded-[24px] p-6 sm:p-8 shadow-xs space-y-3">
+        <div className="flex items-center space-x-2">
+          <div className="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
+            <Info className="w-4 h-4" />
+          </div>
+          <h3 className="text-lg font-bold text-[#1A1A1A]">What does this mean?</h3>
+        </div>
+
+        <p className="text-sm text-[#6B7280] leading-relaxed pl-10">
+          Financial patterns can highlight situations worth reviewing, but they cannot tell us why a transaction happened. Your responses provide context that transaction records cannot.
+        </p>
+      </div>
+
+      {/* RECOMMENDATIONS */}
+      <div className="space-y-4">
+        <h3 className="text-xl font-bold text-[#1A1A1A]">Practical Steps for Reflection</h3>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="bg-white border border-[#EDECE8] rounded-[20px] p-5 shadow-xs space-y-2">
+            <div className="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold text-xs">
+              01
+            </div>
+            <h4 className="font-bold text-slate-900 text-sm">Review your financial access</h4>
+            <p className="text-xs text-slate-600 leading-relaxed">
+              Consider whether you can access essential funds when needed.
+            </p>
+          </div>
+
+          <div className="bg-white border border-[#EDECE8] rounded-[20px] p-5 shadow-xs space-y-2">
+            <div className="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold text-xs">
+              02
+            </div>
+            <h4 className="font-bold text-slate-900 text-sm">Understand your accounts</h4>
+            <p className="text-xs text-slate-600 leading-relaxed">
+              Make sure you know which accounts and services you have access to.
+            </p>
+          </div>
+
+          <div className="bg-white border border-[#EDECE8] rounded-[20px] p-5 shadow-xs space-y-2">
+            <div className="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold text-xs">
+              03
+            </div>
+            <h4 className="font-bold text-slate-900 text-sm">Consider speaking with someone you trust</h4>
+            <p className="text-xs text-slate-600 leading-relaxed">
+              If you feel uncomfortable or pressured about finances, consider seeking appropriate support.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* SUPPORT SECTION */}
+      <div className="bg-[#FAF9F6] border border-[#EDECE8] rounded-[28px] p-6 sm:p-8 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+        <div className="space-y-2 max-w-lg">
+          <div className="inline-flex items-center space-x-1.5 text-xs font-bold text-indigo-700">
+            <Heart className="w-4 h-4 text-indigo-600" />
+            <span>Support & Guidance</span>
+          </div>
+          <h3 className="text-xl sm:text-2xl font-extrabold text-[#1A1A1A]">
+            You don't have to figure everything out alone.
+          </h3>
+          <p className="text-xs sm:text-sm text-[#6B7280]">
+            Confidential helplines, financial counselors, and community organizations can offer personalized advice in a safe environment.
+          </p>
+        </div>
+
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0 w-full sm:w-auto">
+          <NavLink to="/resources" className="w-full sm:w-auto">
+            <button className="w-full px-5 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl transition-all shadow-xs flex items-center justify-center space-x-1.5 cursor-pointer">
+              <BookOpen className="w-4 h-4" />
+              <span>Explore resources</span>
+            </button>
+          </NavLink>
+
+          <button
+            onClick={handleSaveResults}
+            className="w-full px-5 py-3 bg-white hover:bg-stone-50 text-slate-800 font-bold text-xs rounded-xl border border-[#EDECE8] transition-all flex items-center justify-center space-x-1.5 cursor-pointer"
+          >
+            <Download className="w-4 h-4 text-slate-500" />
+            <span>Save my results</span>
+          </button>
+        </div>
+      </div>
+
+      {/* SAFETY NOTICE (NOT ALARMING) */}
+      <div className="p-4 bg-stone-100/80 border border-stone-200/90 rounded-2xl text-xs text-slate-600 leading-relaxed flex items-center justify-between gap-4">
+        <div className="flex items-center space-x-2.5">
+          <Shield className="w-4 h-4 text-slate-500 shrink-0" />
+          <span>If you are in immediate danger, contact appropriate local emergency or support services.</span>
+        </div>
+        <NavLink
+          to="/resources"
+          className="text-indigo-700 hover:text-indigo-900 font-bold underline text-[11px] whitespace-nowrap shrink-0"
+        >
+          View Helplines
+        </NavLink>
+      </div>
+
+      {/* BOTTOM ACTIONS */}
+      <div className="pt-6 border-t border-[#EDECE8] flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
+        <div className="flex flex-col sm:flex-row items-center gap-3">
+          <button
+            onClick={handleStartNewAssessment}
+            className="w-full sm:w-auto px-5 py-3 bg-white hover:bg-stone-50 text-slate-800 font-bold text-xs rounded-xl border border-[#EDECE8] transition-all flex items-center justify-center space-x-1.5 cursor-pointer"
+          >
+            <RotateCcw className="w-4 h-4" />
+            <span>Start new assessment</span>
+          </button>
+
+          {isDemoMode && (
+            <button
+              onClick={() => {
+                resetDemo();
+                addToast({ title: 'Demo Reset', description: 'Restored standard clean state.', type: 'info' });
+                navigate('/');
+              }}
+              className="w-full sm:w-auto px-5 py-3 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs rounded-xl transition-all shadow-2xs flex items-center justify-center space-x-1.5 cursor-pointer"
+            >
+              <RotateCcw className="w-4 h-4" />
+              <span>Reset demo</span>
+            </button>
+          )}
+        </div>
+
+        <button
+          onClick={handleDeleteData}
+          className="px-5 py-3 bg-white hover:bg-red-50 text-red-600 hover:text-red-700 font-bold text-xs rounded-xl border border-red-200 transition-all flex items-center justify-center space-x-1.5 cursor-pointer"
+        >
+          <Trash2 className="w-4 h-4" />
+          <span>Delete my assessment data</span>
+        </button>
+      </div>
+
+      {/* CLOSING PHILOSOPHY CARD */}
+      <div className="bg-stone-100/70 border border-stone-200/80 rounded-[20px] p-5 text-center space-y-1">
+        <p className="text-xs font-bold text-slate-800">
+          "Technology can help identify patterns, but people remain in control."
+        </p>
+        <p className="text-[11px] text-slate-500">
+          Safeguard is designed as an empowered, private decision-support tool.
+        </p>
+      </div>
+
+      {/* FOOTER DISCLAIMER */}
+      <p className="text-[11px] text-[#9CA3AF] text-center pt-2">
+        Your results are informational and should not be treated as legal, medical, or professional advice.
+      </p>
+    </div>
+  );
+};
+
+export default Results;
