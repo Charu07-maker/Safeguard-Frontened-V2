@@ -21,6 +21,7 @@ import { Button } from '../components/ui/Button';
 import { RadioOption } from '../components/ui/RadioOption';
 import { useSafeguard } from '../context/SafeguardContext';
 import { useToast } from '../context/ToastContext';
+import { BackButton } from '../components/common/BackButton';
 
 interface Question {
   id: string;
@@ -261,6 +262,9 @@ export const Assessment: React.FC = () => {
 
   return (
     <div className="min-h-screen py-4 sm:py-6">
+      <div className="max-w-3xl mx-auto mb-4">
+        <BackButton fallbackPath="/" />
+      </div>
       {/* Top Minimal Assessment Header */}
       <div className="max-w-3xl mx-auto flex items-center justify-between pb-6 border-b border-[#EDECE8] mb-8">
         <NavLink to="/" className="flex items-center space-x-2.5 group">

@@ -18,6 +18,7 @@ import {
   Shield,
 } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
+import { BackButton } from '../components/common/BackButton';
 
 interface Article {
   id: string;
@@ -174,6 +175,7 @@ export const Resources: React.FC = () => {
 
   return (
     <div className="max-w-5xl mx-auto space-y-12 animate-fade-in py-4 sm:py-6">
+      <BackButton fallbackPath="/" />
       {/* HEADER */}
       <div className="space-y-4 border-b border-[#EDECE8] pb-6">
         <div className="flex flex-wrap items-center justify-between gap-4">

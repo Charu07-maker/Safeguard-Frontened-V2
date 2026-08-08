@@ -28,6 +28,7 @@ import { Checkbox } from '../components/ui/Checkbox';
 import { Modal } from '../components/ui/Modal';
 import { useSafeguard } from '../context/SafeguardContext';
 import { useToast } from '../context/ToastContext';
+import { BackButton } from '../components/common/BackButton';
 
 export const Settings: React.FC = () => {
   const navigate = useNavigate();
@@ -145,6 +146,7 @@ export const Settings: React.FC = () => {
 
   return (
     <div className="space-y-8 animate-fade-in max-w-4xl mx-auto py-4 sm:py-6">
+      <BackButton fallbackPath="/" />
       {/* Header */}
       <div className="border-b border-[#EDECE8] pb-6 space-y-2">
         <h1 className="text-3xl sm:text-4xl font-extrabold text-[#1A1A1A] tracking-tight">

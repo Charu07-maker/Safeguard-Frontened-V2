@@ -24,6 +24,7 @@ import { Button } from '../components/ui/Button';
 import { Badge } from '../components/ui/Badge';
 import { useSafeguard } from '../context/SafeguardContext';
 import { useToast } from '../context/ToastContext';
+import { BackButton } from '../components/common/BackButton';
 
 type FileState = 'empty' | 'uploading' | 'processing' | 'successful' | 'invalid' | 'error';
 
@@ -167,6 +168,7 @@ export const FinancialData: React.FC = () => {
 
   return (
     <div className="max-w-3xl mx-auto space-y-8 animate-fade-in py-4 sm:py-6">
+      <BackButton fallbackPath="/assessment" />
       {/* TOP HEADER */}
       <div className="space-y-2">
         <div className="flex items-center justify-between text-xs font-extrabold uppercase tracking-widest text-indigo-600">

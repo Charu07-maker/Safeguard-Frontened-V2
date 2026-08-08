@@ -26,6 +26,7 @@ import { Badge } from '../components/ui/Badge';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../components/ui/Card';
 import { useSafeguard } from '../context/SafeguardContext';
 import { useToast } from '../context/ToastContext';
+import { BackButton } from '../components/common/BackButton';
 
 export const Home: React.FC = () => {
   const navigate = useNavigate();
@@ -52,6 +53,7 @@ export const Home: React.FC = () => {
 
   return (
     <div className="space-y-20 py-4 sm:py-8 animate-fade-in selection:bg-indigo-100 selection:text-indigo-900">
+      <BackButton fallbackPath="/dashboard" />
       {/* ---------------- HERO SECTION ---------------- */}
       <section className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center pt-2 pb-8">
         {/* Left Column: Typography & CTAs */}

@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import { useSafeguard } from '../context/SafeguardContext';
 import { AIInsight } from '../components/common/AIInsight';
+import { BackButton } from '../components/common/BackButton';
 
 export const Dashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -195,6 +196,7 @@ export const Dashboard: React.FC = () => {
 
         {/* DASHBOARD BODY */}
         <main className="p-6 sm:p-8 max-w-5xl w-full mx-auto space-y-8">
+          <BackButton fallbackPath="/" />
           {/* MAIN HERO */}
           <div className="bg-white border border-[#EDECE8] rounded-[28px] p-6 sm:p-8 shadow-xs space-y-2 relative overflow-hidden">
             <div className="absolute top-0 left-0 right-0 h-1 bg-indigo-600"></div>

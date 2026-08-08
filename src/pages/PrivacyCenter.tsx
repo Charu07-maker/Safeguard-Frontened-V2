@@ -20,6 +20,7 @@ import {
 import { Modal } from '../components/ui/Modal';
 import { useSafeguard } from '../context/SafeguardContext';
 import { useToast } from '../context/ToastContext';
+import { BackButton } from '../components/common/BackButton';
 
 type DeletionType = 'financial' | 'questionnaire' | 'all' | null;
 
@@ -118,13 +119,7 @@ export const PrivacyCenter: React.FC = () => {
       {/* HEADER */}
       <div className="space-y-3 border-b border-[#EDECE8] pb-6">
         <div className="flex items-center justify-between">
-          <button
-            onClick={() => navigate('/settings')}
-            className="text-xs font-bold text-slate-500 hover:text-indigo-600 flex items-center space-x-1 cursor-pointer"
-          >
-            <ArrowLeft className="w-3.5 h-3.5" />
-            <span>Back to Settings</span>
-          </button>
+          <BackButton fallbackPath="/settings" label="Back to Settings" />
           <span className="px-3 py-1 bg-emerald-50 text-emerald-800 border border-emerald-200 rounded-full text-xs font-bold uppercase tracking-wider">
             Verified Local Privacy
           </span>

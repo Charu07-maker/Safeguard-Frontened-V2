@@ -20,6 +20,7 @@ import {
 import { useSafeguard } from '../context/SafeguardContext';
 import { useToast } from '../context/ToastContext';
 import { AIInsight } from '../components/common/AIInsight';
+import { BackButton } from '../components/common/BackButton';
 
 export const Results: React.FC = () => {
   const navigate = useNavigate();
@@ -109,6 +110,7 @@ Generated locally via Safeguard. Zero data saved on external servers.`;
 
   return (
     <div className="max-w-4xl mx-auto space-y-10 animate-fade-in py-4 sm:py-6">
+      <BackButton fallbackPath="/questionnaire" />
       {/* HEADER */}
       <div className="space-y-3 border-b border-[#EDECE8] pb-6">
         <div className="flex items-center justify-between">

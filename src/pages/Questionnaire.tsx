@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { useSafeguard } from '../context/SafeguardContext';
 import { useToast } from '../context/ToastContext';
+import { BackButton } from '../components/common/BackButton';
 
 interface Question {
   id: string;
@@ -146,6 +147,7 @@ export const Questionnaire: React.FC = () => {
 
   return (
     <div className="max-w-2xl mx-auto space-y-8 animate-fade-in py-4 sm:py-6">
+      <BackButton fallbackPath="/pattern-analysis" />
       {/* TOP HEADER */}
       <div className="space-y-3 text-center sm:text-left">
         <div className="flex flex-wrap items-center justify-between gap-2">
