@@ -24,10 +24,15 @@ import { AIInsight } from '../components/common/AIInsight';
 export const Results: React.FC = () => {
   const navigate = useNavigate();
   const { addToast } = useToast();
-  const { wipeAllData, questionnaireAnswers, isDemoMode, resetDemo } = useSafeguard();
+  const { wipeAllData, questionnaireAnswers, isDemoMode, resetDemo, calculatedScore } = useSafeguard();
 
-  // Active signal level state (Low, Moderate, Higher) - defaults to Moderate
-  const [activeSignal, setActiveSignal] = useState<'Low' | 'Moderate' | 'Higher'>('Moderate');
+  // Calculated active signal level (Low, Moderate, Higher) based automatically on questionnaire & financial responses
+  const activeSignal: 'Low' | 'Moderate' | 'Higher' = React.useMemo(() => {
+    const level = calculatedScore.vulnerabilityLevel;
+    if (level === 'elevated' || level === 'high') return 'Higher';
+    if (level === 'moderate') return 'Moderate';
+    return 'Low';
+  }, [calculatedScore.vulnerabilityLevel]);
 
   const handleSaveResults = () => {
     const reportText = `SAFEGUARD FINANCIAL AUTONOMY OVERVIEW
@@ -150,7 +155,7 @@ Generated locally via Safeguard. Zero data saved on external servers.`;
       {/* RESULT CARD */}
       <div className="bg-white border border-[#EDECE8] rounded-[28px] p-6 sm:p-10 shadow-sm space-y-8 relative overflow-hidden">
         {/* Subtle accent bar */}
-        <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-indigo-500 via-amber-500 to-indigo-500"></div>
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-500 via-indigo-600 to-purple-600"></div>
 
         <div className="space-y-4">
           <div className="flex flex-wrap items-center gap-3">
@@ -196,20 +201,19 @@ Generated locally via Safeguard. Zero data saved on external servers.`;
               </div>
             </div>
 
-            {/* Three signal level tabs */}
+            {/* Three signal level tabs (Read-Only) */}
             <div className="flex items-center space-x-1 bg-stone-100 p-1 rounded-xl border border-stone-200">
               {(['Low', 'Moderate', 'Higher'] as const).map((level) => (
-                <button
+                <span
                   key={level}
-                  onClick={() => setActiveSignal(level)}
-                  className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all select-none ${
                     activeSignal === level
                       ? 'bg-white text-indigo-950 shadow-xs border border-stone-200'
-                      : 'text-slate-600 hover:text-slate-900'
+                      : 'text-slate-400 opacity-60'
                   }`}
                 >
                   {level}
-                </button>
+                </span>
               ))}
             </div>
           </div>

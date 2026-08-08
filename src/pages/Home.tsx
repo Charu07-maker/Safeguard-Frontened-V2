@@ -174,28 +174,6 @@ export const Home: React.FC = () => {
         </div>
       </section>
 
-      {/* ---------------- TRUST STRIP ---------------- */}
-      <section className="border-y border-[#EDECE8] py-6 bg-white/60 backdrop-blur-xs rounded-2xl">
-        <div className="max-w-5xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-          <div className="flex items-center justify-center space-x-2 py-1">
-            <div className="w-2 h-2 rounded-full bg-indigo-600"></div>
-            <span className="text-sm font-bold text-[#1A1A1A]">Private by design</span>
-          </div>
-          <div className="flex items-center justify-center space-x-2 py-1">
-            <div className="w-2 h-2 rounded-full bg-indigo-600"></div>
-            <span className="text-sm font-bold text-[#1A1A1A]">Consent-first</span>
-          </div>
-          <div className="flex items-center justify-center space-x-2 py-1">
-            <div className="w-2 h-2 rounded-full bg-indigo-600"></div>
-            <span className="text-sm font-bold text-[#1A1A1A]">User controlled</span>
-          </div>
-          <div className="flex items-center justify-center space-x-2 py-1">
-            <div className="w-2 h-2 rounded-full bg-indigo-600"></div>
-            <span className="text-sm font-bold text-[#1A1A1A]">Informational only</span>
-          </div>
-        </div>
-      </section>
-
       {/* ---------------- HOW IT WORKS ---------------- */}
       <section id="how-it-works" className="scroll-mt-24 space-y-12">
         <div className="text-center max-w-2xl mx-auto space-y-3">

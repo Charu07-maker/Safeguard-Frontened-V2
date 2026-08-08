@@ -30,7 +30,7 @@ export const Dashboard: React.FC = () => {
   const hasQuestionnaire = Object.keys(questionnaireAnswers).length > 0;
 
   return (
-    <div className="min-h-screen bg-[#FAF9F6] text-slate-900 flex flex-col md:flex-row -mx-4 sm:-mx-6 lg:-mx-8 -mt-6 -mb-16">
+    <div className="min-h-screen bg-[#FAF9F6] text-slate-900 flex flex-col md:flex-row w-full min-w-0 overflow-x-hidden">
       {/* DESKTOP SIDEBAR */}
       <aside className="w-full md:w-64 bg-white border-r border-[#EDECE8] flex flex-col justify-between shrink-0 p-5 space-y-8">
         <div className="space-y-8">
